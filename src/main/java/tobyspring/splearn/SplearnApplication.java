@@ -1,0 +1,11 @@
+package tobyspring.splearn;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class SplearnApplication {
+    static void main(String[] args) {
+        SpringApplication.run(SplearnApplication.class, args);
+    }
+}
