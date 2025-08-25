@@ -3,13 +3,14 @@ package tobyspring.splearn.domain;
 import static java.util.Objects.requireNonNull;
 import static org.springframework.util.Assert.state;
 
+import java.util.regex.Pattern;
 import lombok.Getter;
 import lombok.ToString;
 
 @Getter
 @ToString
 public class Member {
-    private String email;
+    private Email email;
 
     private String nickname;
 
@@ -24,7 +25,7 @@ public class Member {
 
         // 빌더 도입 시에도 생기는 단점: 의도치 않게 null이 들어갈 수 있음
         // 이번에는 Parameter Object 사용으로 명료한 코드를 작성해보자
-        member.email = requireNonNull(createRequest.email());
+        member.email = new Email(createRequest.email());
         member.nickname = requireNonNull(createRequest.nickname());
         member.passwordHash = requireNonNull(passwordEncoder.encode(createRequest.password()));
         member.status = MemberStatus.PENDING;

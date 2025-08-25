@@ -99,4 +99,11 @@ class MemberTest {
 
         assertThat(member.isActive()).isFalse();
     }
+
+    @Test
+    void 잘못된_이메일_형식() {
+        assertThatThrownBy(() ->
+            Member.create(new MemberCreateRequest("abcde", "user", "secret"), passwordEncoder)
+        ).isInstanceOf(IllegalArgumentException.class);
+    }
 }
