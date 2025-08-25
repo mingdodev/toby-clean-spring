@@ -1,6 +1,5 @@
 package tobyspring.splearn.domain;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -26,18 +25,12 @@ class MemberTest {
                 return encode(password).equals(passwordHash);
             }
         };
-        member = Member.create("user@example.com", "user", "secret", passwordEncoder);
+        member = Member.create(new MemberCreateRequest("user@example.com", "user", "secret"), passwordEncoder);
     }
 
     @Test
     void 회원을_생성하면_회원_상태는_가입_대기() {
         assertThat(member.getStatus()).isEqualTo(MemberStatus.PENDING);
-    }
-
-    @Test
-    void 생성자에서_Null이_들어오면_예외가_발생() {
-        assertThatThrownBy(() -> Member.create(null, "user", "secret", null))
-                .isInstanceOf(NullPointerException.class);
     }
 
     @Test
@@ -92,5 +85,18 @@ class MemberTest {
         member.changePassword("verysecret", passwordEncoder);
 
         assertThat(member.verifyPassword("verysecret", passwordEncoder)).isTrue();
+    }
+
+    @Test
+    void 활성화_상태_확인() {
+        assertThat(member.isActive()).isFalse();
+
+        member.activate();
+
+        assertThat(member.isActive()).isTrue();
+
+        member.deactivate();
+
+        assertThat(member.isActive()).isFalse();
     }
 }
