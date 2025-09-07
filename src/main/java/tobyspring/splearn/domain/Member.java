@@ -3,7 +3,6 @@ package tobyspring.splearn.domain;
 import static java.util.Objects.requireNonNull;
 import static org.springframework.util.Assert.state;
 
-import java.util.regex.Pattern;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -20,7 +19,7 @@ public class Member {
 
     private Member() {}
 
-    public static Member create(MemberCreateRequest createRequest, PasswordEncoder passwordEncoder) {
+    public static Member register(MemberRegisterRequest createRequest, PasswordEncoder passwordEncoder) {
         Member member = new Member();
 
         // 빌더 도입 시에도 생기는 단점: 의도치 않게 null이 들어갈 수 있음

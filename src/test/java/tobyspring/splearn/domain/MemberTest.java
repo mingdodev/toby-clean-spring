@@ -25,11 +25,11 @@ class MemberTest {
                 return encode(password).equals(passwordHash);
             }
         };
-        member = Member.create(new MemberCreateRequest("user@example.com", "user", "secret"), passwordEncoder);
+        member = Member.register(new MemberRegisterRequest("user@example.com", "user", "secret"), passwordEncoder);
     }
 
     @Test
-    void 회원을_생성하면_회원_상태는_가입_대기() {
+    void 회원을_생성하면_회원_상태는_등록_대기() {
         assertThat(member.getStatus()).isEqualTo(MemberStatus.PENDING);
     }
 
@@ -103,7 +103,7 @@ class MemberTest {
     @Test
     void 잘못된_이메일_형식() {
         assertThatThrownBy(() ->
-            Member.create(new MemberCreateRequest("abcde", "user", "secret"), passwordEncoder)
+            Member.register(new MemberRegisterRequest("abcde", "user", "secret"), passwordEncoder)
         ).isInstanceOf(IllegalArgumentException.class);
     }
 }
