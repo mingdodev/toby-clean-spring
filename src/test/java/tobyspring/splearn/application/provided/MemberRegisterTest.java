@@ -1,95 +1,37 @@
 package tobyspring.splearn.application.provided;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.test.util.ReflectionTestUtils;
-import tobyspring.splearn.application.MemberService;
-import tobyspring.splearn.application.required.EmailSender;
-import tobyspring.splearn.application.required.MemberRepository;
-import tobyspring.splearn.domain.Email;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.transaction.annotation.Transactional;
+import tobyspring.splearn.SplearnTestConfiguration;
+import tobyspring.splearn.domain.DuplicateEmailException;
 import tobyspring.splearn.domain.Member;
 import tobyspring.splearn.domain.MemberFixture;
 import tobyspring.splearn.domain.MemberStatus;
 
-class MemberRegisterTest {
-    @Test
-    void registerTestStub() {
-        MemberRegister register = new MemberService(
-              new MemberRepositoryStub(), new EmailSenderStub(), MemberFixture.createPasswordEncoder()
-        );
+@SpringBootTest
+@Transactional
+@Import(SplearnTestConfiguration.class)
+public record MemberRegisterTest(MemberRegister memberRegister) {
 
-        Member member = register.register(MemberFixture.createMemberRegisterRequest());
+    @Test
+    void register() {
+        Member member = memberRegister.register(MemberFixture.createMemberRegisterRequest());
 
         assertThat(member.getId()).isNotNull();
         assertThat(member.getStatus()).isEqualTo(MemberStatus.PENDING);
     }
 
     @Test
-    void registerTestMock() {
-        EmailSenderMock emailSenderMock = new EmailSenderMock();
+    void duplicateEmailFail() {
+        // 이건 도메인 모델에서 체크할 수 없음. 외부 의존성(DB)가 필요하기 때문.
+        Member member = memberRegister.register(MemberFixture.createMemberRegisterRequest());
 
-        MemberRegister register = new MemberService(
-                new MemberRepositoryStub(), emailSenderMock, MemberFixture.createPasswordEncoder()
-        );
-
-        Member member = register.register(MemberFixture.createMemberRegisterRequest());
-
-        assertThat(member.getId()).isNotNull();
-        assertThat(member.getStatus()).isEqualTo(MemberStatus.PENDING);
-
-        assertThat(emailSenderMock.getTos()).hasSize(1);
-        assertThat(emailSenderMock.getTos().getFirst()).isEqualTo(member.getEmail());
+        assertThatThrownBy(() -> memberRegister.register(MemberFixture.createMemberRegisterRequest()))
+                .isInstanceOf(DuplicateEmailException.class);
     }
-
-    @Test
-    void registerTestMockito() {
-        EmailSender emailSenderMock = Mockito.mock(EmailSender.class);
-
-        MemberRegister register = new MemberService(
-                new MemberRepositoryStub(), emailSenderMock, MemberFixture.createPasswordEncoder()
-        );
-
-        Member member = register.register(MemberFixture.createMemberRegisterRequest());
-
-        assertThat(member.getId()).isNotNull();
-        assertThat(member.getStatus()).isEqualTo(MemberStatus.PENDING);
-        Mockito.verify(emailSenderMock).send(eq(member.getEmail()), any(), any());
-    }
-
-    static class MemberRepositoryStub implements MemberRepository {
-
-        @Override
-        public Member save(Member member) {
-            ReflectionTestUtils.setField(member, "id", 1L);
-            return member;
-        }
-    }
-
-    static class EmailSenderStub implements EmailSender {
-
-        @Override
-        public void send(Email email, String subject, String body) {
-        }
-    }
-
-    static class EmailSenderMock implements EmailSender {
-        List<Email> tos = new ArrayList<>();
-
-        public List<Email> getTos() {
-            return tos;
-        }
-
-        @Override
-        public void send(Email email, String subject, String body) {
-            tos.add(email);
-        }
-    }
-
 }
