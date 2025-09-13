@@ -59,13 +59,13 @@ class MemberTest {
     
     @Test
     void 비밀번호_검증() {
-        assertThat(member.verifyPassword("secret", passwordEncoder)).isTrue();
+        assertThat(member.verifyPassword("longsecret", passwordEncoder)).isTrue();
         assertThat(member.verifyPassword("hello", passwordEncoder)).isFalse();
     }
 
     @Test
     void 닉네임_변경() {
-        assertThat(member.getNickname()).isEqualTo("user");
+        assertThat(member.getNickname()).isEqualTo("mingdo");
 
         member.changeNickname("changedUser");
 
@@ -74,9 +74,9 @@ class MemberTest {
 
     @Test
     void 비밀번호_변경() {
-        member.changePassword("verysecret", passwordEncoder);
+        member.changePassword("veryverysecret", passwordEncoder);
 
-        assertThat(member.verifyPassword("verysecret", passwordEncoder)).isTrue();
+        assertThat(member.verifyPassword("veryverysecret", passwordEncoder)).isTrue();
     }
 
     @Test
