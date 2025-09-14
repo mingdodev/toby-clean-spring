@@ -19,7 +19,7 @@ import tobyspring.splearn.domain.MemberStatus;
 @SpringBootTest
 @Transactional
 @Import(SplearnTestConfiguration.class)
-public record MemberRegisterTest(MemberRegister memberRegister, EntityManager entityManager) {
+record MemberRegisterTest(MemberRegister memberRegister, EntityManager entityManager) {
 
     @Test
     void register() {
@@ -32,7 +32,7 @@ public record MemberRegisterTest(MemberRegister memberRegister, EntityManager en
     @Test
     void duplicateEmailFail() {
         // 이건 도메인 모델에서 체크할 수 없음. 외부 의존성(DB)가 필요하기 때문.
-        Member member = memberRegister.register(MemberFixture.createMemberRegisterRequest());
+        memberRegister.register(MemberFixture.createMemberRegisterRequest());
 
         assertThatThrownBy(() -> memberRegister.register(MemberFixture.createMemberRegisterRequest()))
                 .isInstanceOf(DuplicateEmailException.class);
