@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
 import tobyspring.splearn.SplearnTestConfiguration;
 import tobyspring.splearn.domain.member.DuplicateEmailException;
+import tobyspring.splearn.domain.member.DuplicateProfileException;
 import tobyspring.splearn.domain.member.Member;
 import tobyspring.splearn.domain.member.MemberFixture;
 import tobyspring.splearn.domain.member.MemberInfoUpdateRequest;
@@ -25,6 +26,13 @@ record MemberRegisterTest(MemberRegister memberRegister, EntityManager entityMan
 
     private Member registerMember() {
         Member member = memberRegister.register(MemberFixture.createMemberRegisterRequest());
+        entityManager.flush();
+        entityManager.clear();
+        return member;
+    }
+
+    private Member registerMember(String email) {
+        Member member = memberRegister.register(MemberFixture.createMemberRegisterRequest(email));
         entityManager.flush();
         entityManager.clear();
         return member;
@@ -85,6 +93,32 @@ record MemberRegisterTest(MemberRegister memberRegister, EntityManager entityMan
         member = memberRegister.updateInfo(member.getId(), new MemberInfoUpdateRequest("Peter", "hello23", "자기소개"));
 
         assertThat(member.getDetail().getProfile().address()).isEqualTo("hello23");
+    }
+
+    @Test
+    void updateDuplicateProfileFail() {
+        Member member = registerMember();
+        memberRegister.activate(member.getId());
+        member = memberRegister.updateInfo(member.getId(), new MemberInfoUpdateRequest("Peter", "hello23", "자기소개"));
+
+        Member member2 = registerMember("newemail@splearn.com");
+        memberRegister.activate(member2.getId());
+        entityManager.flush();
+        entityManager.clear();
+
+        // member2는 다른 멤버와 같은 프로필 주소를 사용할 수 없다
+        assertThatThrownBy(() -> {
+            memberRegister.updateInfo(member2.getId(), new MemberInfoUpdateRequest("James", "hello23", "자기소개2"));
+        }).isInstanceOf(DuplicateProfileException.class);
+
+        // 다른 프로필 주소로는 변경 가능
+        memberRegister.updateInfo(member2.getId(), new MemberInfoUpdateRequest("James", "james123", "자기소개2"));
+
+        // 기존 프로필 주소를 입력하는 것도 가능
+        memberRegister.updateInfo(member.getId(), new MemberInfoUpdateRequest("Peter", "hello23", "자기소개"));
+
+        // 프로필 주소를 공백으로 입력하는 것도 가능
+        memberRegister.updateInfo(member.getId(), new MemberInfoUpdateRequest("Peter", "", "자기소개"));
     }
 
     @Test

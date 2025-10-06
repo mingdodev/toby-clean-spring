@@ -1,5 +1,6 @@
 package tobyspring.splearn.application.member;
 
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,7 +10,9 @@ import tobyspring.splearn.application.member.provided.MemberRegister;
 import tobyspring.splearn.application.member.required.EmailSender;
 import tobyspring.splearn.application.member.required.MemberRepository;
 import tobyspring.splearn.domain.member.DuplicateEmailException;
+import tobyspring.splearn.domain.member.DuplicateProfileException;
 import tobyspring.splearn.domain.member.MemberInfoUpdateRequest;
+import tobyspring.splearn.domain.member.Profile;
 import tobyspring.splearn.domain.shared.Email;
 import tobyspring.splearn.domain.member.Member;
 import tobyspring.splearn.domain.member.MemberRegisterRequest;
@@ -60,9 +63,22 @@ public class MemberModifyService implements MemberRegister {
     public Member updateInfo(Long memberId, MemberInfoUpdateRequest memberInfoUpdateRequest) {
         Member member = memberFinder.find(memberId);
 
+        checkDuplicateProfile(member, memberInfoUpdateRequest.profileAddress());
+
         member.updateInfo(memberInfoUpdateRequest);
 
         return memberRepository.save(member);
+    }
+
+    private void checkDuplicateProfile(Member member, String profileAddress) {
+        if (profileAddress.isEmpty()) return;
+
+        Profile currentProfile = member.getDetail().getProfile();
+        if (currentProfile != null && Objects.equals(currentProfile.address(), profileAddress)) return;
+
+        if (memberRepository.findByProfile(new Profile(profileAddress)).isPresent()) {
+            throw new DuplicateProfileException("이미 존재하는 프로필 주소입니다.");
+        }
     }
 
     private void sendWelcomeEmail(Member member) {

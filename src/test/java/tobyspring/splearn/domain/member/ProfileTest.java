@@ -12,12 +12,11 @@ class ProfileTest {
         new Profile("hello");
         new Profile("123hello");
         new Profile("323434");
+        new Profile("");
     }
 
     @Test
     void profileFail() {
-        Assertions.assertThatThrownBy(() -> new Profile(""))
-            .isInstanceOf(IllegalArgumentException.class);
         Assertions.assertThatThrownBy(() -> new Profile("1234512345123456"))
                 .isInstanceOf(IllegalArgumentException.class);
         Assertions.assertThatThrownBy(() -> new Profile("123hello@#"))
