@@ -1,9 +1,7 @@
 package tobyspring.splearn.domain.shared;
 
-import jakarta.persistence.Embeddable;
 import java.util.regex.Pattern;
 
-@Embeddable
 public record Email(
         String address
 ) {
