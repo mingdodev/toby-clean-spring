@@ -1,4 +1,4 @@
-package tobyspring.splearn.adaptor.integration;
+package tobyspring.splearn.adapter.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

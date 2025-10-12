@@ -1,4 +1,4 @@
-package tobyspring.splearn.adaptor.security;
+package tobyspring.splearn.adapter.security;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

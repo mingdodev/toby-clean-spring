@@ -1,4 +1,4 @@
-package tobyspring.splearn.adaptor.security;
+package tobyspring.splearn.adapter.security;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;

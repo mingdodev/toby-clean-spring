@@ -1,4 +1,4 @@
-package tobyspring.splearn.adaptor.webapi.dto;
+package tobyspring.splearn.adapter.webapi.dto;
 
 import tobyspring.splearn.domain.member.Member;
 

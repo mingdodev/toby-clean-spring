@@ -1,4 +1,4 @@
-package tobyspring.splearn.adaptor;
+package tobyspring.splearn.adapter;
 
 import java.time.LocalDateTime;
 import org.springframework.http.HttpStatus;

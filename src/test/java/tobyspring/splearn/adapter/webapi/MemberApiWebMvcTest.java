@@ -1,4 +1,4 @@
-package tobyspring.splearn.adaptor.webapi;
+package tobyspring.splearn.adapter.webapi;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;

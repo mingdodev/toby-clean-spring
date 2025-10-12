@@ -1,4 +1,4 @@
-package tobyspring.splearn.adaptor.webapi;
+package tobyspring.splearn.adapter.webapi;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -17,7 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import org.springframework.test.web.servlet.assertj.MvcTestResult;
 import org.springframework.transaction.annotation.Transactional;
-import tobyspring.splearn.adaptor.webapi.dto.MemberRegisterResponse;
+import tobyspring.splearn.adapter.webapi.dto.MemberRegisterResponse;
 import tobyspring.splearn.application.member.provided.MemberRegister;
 import tobyspring.splearn.application.member.required.MemberRepository;
 import tobyspring.splearn.domain.member.Member;
